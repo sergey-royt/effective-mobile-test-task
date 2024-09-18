@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "effective-mobile-test-task"
+version = "0.1.0"
+description = "FastAPI powered warehouse application"
+authors = ["sergey-royt <goodstop687@gmail.com>"]
+readme = "README.md"
+packages = [{include = "effective_mobile_test_task"}]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+sqlalchemy = "^2.0.35"
+fastapi = {extras = ["standard"], version = "^0.115.0"}
+setuptools = "^75.1.0"
+python-dotenv = "^1.0.1"
+
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^7.1.1"
+pre-commit = "^3.8.0"
+black = "^24.8.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+--line-length=79

@@ -1,0 +1,5 @@
+# idea options
+.idea/
+
+# pre-commit settings
+.pre-commit-config.yaml

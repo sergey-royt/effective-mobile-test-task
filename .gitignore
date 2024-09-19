@@ -3,3 +3,12 @@
 
 # pre-commit settings
 .pre-commit-config.yaml
+
+# dev database
+db.sqlite3
+
+# pytests
+*__pycache__/
+
+# env variables
+.env

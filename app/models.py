@@ -2,7 +2,7 @@ import datetime
 import enum
 from typing_extensions import Annotated
 
-from sqlalchemy.orm import DeclarativeBase, relationship
+from sqlalchemy.orm import relationship
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy import String, Numeric, func, Enum, ForeignKey, Column

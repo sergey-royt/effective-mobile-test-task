@@ -93,7 +93,6 @@ def delete_product(db: Session, product_id: int):
         return True
 
 
-
 def create_order(db: Session, order: schemas.OrderCreate):
 
     db_order = models.Order()

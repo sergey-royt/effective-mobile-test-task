@@ -25,6 +25,8 @@ timestamp = Annotated[
 # order status choices
 class OrderStatusEnum(enum.Enum):
 
+    processed = "в обработке"
+
     in_progress = "в процессе"
 
     sent = "отправлен"
@@ -63,7 +65,7 @@ class Order(Base):
 
     status = Column(
         Enum(OrderStatusEnum),
-        default=OrderStatusEnum.in_progress,
+        default=OrderStatusEnum.processed,
         nullable=False,
     )
 
@@ -76,9 +78,9 @@ class OrderItem(Base):
 
     id: Mapped[intpk]
 
-    order_id: Mapped[intpk] = mapped_column(ForeignKey("order.id"))
+    order_id: Mapped[int] = mapped_column(ForeignKey("order.id"))
 
-    product_id: Mapped[intpk] = mapped_column(ForeignKey("product.id"))
+    product_id: Mapped[int] = mapped_column(ForeignKey("product.id"))
 
     quantity: Mapped[int]
 

@@ -6,12 +6,7 @@ from . import models, schemas
 
 def create_product(db: Session, product: schemas.ProductCreate):
 
-    db_product = models.Product(
-        name=product.name,
-        description=product.description,
-        price=product.price,
-        stock_quantity=product.stock_quantity,
-    )
+    db_product = models.Product(**product.model_dump())
 
     db.add(db_product)
     db.commit()
@@ -49,7 +44,7 @@ def get_product_quantity(db: Session, product_id: int):
 def reduce_product_quantity(db: Session, product_id: int, r_value: int):
     db_product = get_product_by_id(db, product_id)
 
-    db_product.quantity -= r_value
+    db_product.stock_quantity -= r_value
 
     stmt = select(models.Product).where(models.Product.id == product_id)
 
@@ -104,7 +99,9 @@ def create_order(db: Session, order: schemas.OrderCreate):
     db.commit()
     db.refresh(db_order)
 
-    db_order.items = create_order_items(db, db_order.id, order.items)
+    create_order_items(db, db_order.id, order.items)
+    db.refresh(db_order)
+
     if not db_order.items:
         db.delete(db_order)
         db.execute(
@@ -112,12 +109,6 @@ def create_order(db: Session, order: schemas.OrderCreate):
         ).first()
         db.commit()
         return None
-
-    db_order = db.execute(
-        select(models.Order).where(models.Order.id == db_order.id)
-    ).scalar_one()
-    db.commit()
-    db.refresh(db_order)
 
     return db_order
 
@@ -130,13 +121,13 @@ def get_order_by_id(db: Session, order_id: int):
     return db.query(models.Order).filter(models.Order.id == order_id).first()
 
 
-def change_order_status(db: Session, order_id: int, status: str):
+def update_order_status(db: Session, order_id: int, status: str):
     db_order = get_order_by_id(db, order_id)
 
     db_order.status = status
 
     db_order = db.execute(
-        select(models.Product).where(models.Product.id == order_id)
+        select(models.Order).where(models.Order.id == order_id)
     ).scalar_one()
 
     db.commit()
@@ -146,24 +137,24 @@ def change_order_status(db: Session, order_id: int, status: str):
 
 
 def create_order_items(
-    db: Session, order_id: int, items: list[schemas.OrderItem]
+    db: Session, order_id: int, items: list[schemas.OrderItemCreate]
 ):
     db_items = []
-
     for item in items:
-        if item.quantity > get_product_quantity(db, item.id):
+        if item.quantity > get_product_quantity(db, item.product_id):
             return None
 
         reduce_product_quantity(db, item.product_id, item.quantity)
 
-        db_items.append(
-            models.OrderItem(order_id=order_id, **item.model_dump())
+        db_item = models.OrderItem(
+            order_id=order_id,
+            product_id=item.product_id,
+            quantity=item.quantity,
         )
+        db_items.append(db_item)
 
     db.add_all(db_items)
 
     db.commit()
 
-    db.refresh(db_items)
-
-    return db_items
+    return True

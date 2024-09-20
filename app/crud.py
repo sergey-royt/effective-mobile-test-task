@@ -10,7 +10,7 @@ def create_product(db: Session, product: schemas.ProductCreate):
         name=product.name,
         description=product.description,
         price=product.price,
-        stock_quantity=product.stock_quantity
+        stock_quantity=product.stock_quantity,
     )
 
     db.add(db_product)
@@ -39,7 +39,10 @@ def get_product_by_name(db: Session, name: str):
 
 
 def get_product_quantity(db: Session, product_id: int):
-    stmt = select(models.Product.stock_quantity).where(models.Product.id == product_id)
+    stmt = select(models.Product.stock_quantity).where(
+        models.Product.id == product_id
+    )
+
     return db.execute(stmt).scalar_one_or_none()
 
 

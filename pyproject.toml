@@ -5,7 +5,6 @@ description = "FastAPI powered warehouse application"
 authors = ["sergey-royt <goodstop687@gmail.com>"]
 readme = "README.md"
 packages = [
-    {include = "effective_mobile_test_task"},
     {include = "app"}
 ]
 
@@ -13,7 +12,6 @@ packages = [
 python = "^3.12"
 sqlalchemy = "^2.0.35"
 fastapi = {extras = ["standard"], version = "^0.115.0"}
-setuptools = "^75.1.0"
 python-dotenv = "^1.0.1"
 
 
@@ -22,6 +20,7 @@ flake8 = "^7.1.1"
 pre-commit = "^3.8.0"
 black = "^24.8.0"
 pytest = "^8.3.3"
+setuptools = "^75.1.0"
 
 [build-system]
 requires = ["poetry-core"]

@@ -21,7 +21,7 @@ class ProductUpdate(ProductBase):
     pass
 
 
-class Product(BaseModel):
+class Product(ProductBase):
 
     id: int
 

@@ -88,8 +88,12 @@ def reduce_product_quantity(
     :return: product if stock quantity reducing passed successfully
     or None if there is not enough products in stock
     """
+    product_stock_quantity = get_product_quantity(db, product_id)
 
-    if r_value > get_product_quantity(db, product_id):
+    if not product_stock_quantity:
+        return None
+
+    if r_value > product_stock_quantity:
         return None
 
     db_product = get_product_by_id(db, product_id)
@@ -162,9 +166,10 @@ def create_order(
     :param order: order containing order items
     :return: created order or None if there is not enough products
     """
-
-    db_order = models.Order()
-
+    if order.status:
+        db_order = models.Order(status=order.status)
+    else:
+        db_order = models.Order()
     db.add(db_order)
     db.commit()
     db.refresh(db_order)
@@ -204,21 +209,23 @@ def get_order_by_id(db: Session, order_id: int) -> schemas.Order | None:
     :return: order with given id or None if there's no match
     """
 
-    stmt = select(models.Product).where(models.Order.id == order_id)
+    stmt = select(models.Order).where(models.Order.id == order_id)
     result = db.execute(statement=stmt).scalar()
     return result
 
 
 def update_order_status(
     db: Session, order_id: int, status: str
-) -> schemas.Order:
+) -> schemas.Order | None:
     """
     :param db: session object
     :param order_id: order id
     :param status: new order status
-    :return: updated order
+    :return: updated order or none if order not exists
     """
     db_order = get_order_by_id(db, order_id)
+    if not db_order:
+        return None
 
     db_order.status = status
 

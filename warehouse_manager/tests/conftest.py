@@ -2,13 +2,20 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 import os
+from fastapi.testclient import TestClient
 
 from warehouse_manager.database import Base
 from warehouse_manager.main import app, get_db
-from warehouse_manager.tests.factories import ProductFactory
+from warehouse_manager.tests.factories import (
+    ProductFactory,
+    OrderFactory,
+    OrderItemFactory,
+)
 
 # should encapsulate
 DB_URL = os.getenv("TEST_DATABASE_URL")
+
+client = TestClient(app)
 
 
 def pytest_addoption(parser):
@@ -42,6 +49,8 @@ def db_session(db_session_factory):
     """yields a SQLAlchemy connection which is rollbacked after the test"""
     session_ = db_session_factory()
     ProductFactory._meta.sqlalchemy_session = session_
+    OrderFactory._meta.sqlalchemy_session = session_
+    OrderItemFactory._meta.sqlalchemy_session = session_
 
     session_.begin()
     yield session_

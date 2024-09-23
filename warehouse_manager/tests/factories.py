@@ -1,6 +1,6 @@
 import factory
 
-from warehouse_manager.models import Product
+from warehouse_manager.models import Product, Order, OrderItem
 
 
 class UniqueFaker(factory.Faker):
@@ -21,3 +21,13 @@ class ProductFactory(factory.alchemy.SQLAlchemyModelFactory):
         "pyfloat", positive=True, max_value=50000, right_digits=2
     )
     stock_quantity = factory.Faker("pyint", min_value=0, max_value=100)
+
+
+class OrderFactory(factory.alchemy.SQLAlchemyModelFactory):
+    class Meta:
+        model = Order
+
+
+class OrderItemFactory(factory.alchemy.SQLAlchemyModelFactory):
+    class Meta:
+        model = OrderItem

@@ -1,14 +1,10 @@
-from fastapi.testclient import TestClient
 from http import HTTPStatus
 from sqlalchemy import select
 import json
 
-from warehouse_manager.main import app
+from .conftest import client
 from warehouse_manager.models import Product
 from .factories import ProductFactory
-
-
-client = TestClient(app)
 
 
 def test_post_valid(db_session):
@@ -96,8 +92,8 @@ def test_read_products_default(db_session):
     response_list = json.loads(response_no_options.content)
     assert response_list[0]["id"] == 1
     assert len(response_list) == 100
-    assert any(d["id"] < 100 for d in response_list)
-    assert not any(d["id"] > 100 for d in response_list)
+    assert any(product["id"] < 100 for product in response_list)
+    assert not any(product["id"] > 100 for product in response_list)
 
 
 def test_read_products_set_limit_anf_offset(db_session):
@@ -118,7 +114,7 @@ def test_read_product_exists(db_session):
     response = client.get("/products/2")
     response_product = json.loads(response.content)
 
-    assert response_product["id"] == 2
+    assert response_product["id"] == db_product2.id
     assert response_product["name"] == db_product2.name
     assert not response_product["description"] == db_product1.description
 

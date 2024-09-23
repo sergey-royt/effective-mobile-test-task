@@ -13,4 +13,4 @@ dev:
 	poetry run uvicorn warehouse_manager.main:app --reload
 
 lint:
-	poetry run flake8 app
+	poetry run flake8 warehouse_manager

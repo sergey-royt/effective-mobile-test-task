@@ -4,11 +4,16 @@
 # pre-commit settings
 .pre-commit-config.yaml
 
-# dev database
+# dev databases
 db.sqlite3
+test.sqlite3
 
 # pytests
 *__pycache__/
+
+# coverage
+.coverage
+coverage.xml
 
 # env variables
 .env

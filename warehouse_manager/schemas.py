@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class ProductBase(BaseModel):
@@ -10,7 +10,7 @@ class ProductBase(BaseModel):
 
     price: float
 
-    stock_quantity: int
+    stock_quantity: int | None = None
 
 
 class ProductCreate(ProductBase):
@@ -25,8 +25,7 @@ class Product(ProductBase):
 
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # order item section
@@ -48,8 +47,7 @@ class OrderItem(OrderItemBase):
 
     quantity: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # order section
@@ -70,5 +68,4 @@ class Order(OrderBase):
 
     items: list[OrderItem]
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

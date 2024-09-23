@@ -5,7 +5,7 @@ description = "FastAPI powered warehouse application"
 authors = ["sergey-royt <goodstop687@gmail.com>"]
 readme = "README.md"
 packages = [
-    {include = "app"}
+    {include = "warehouse_manager"}
 ]
 
 [tool.poetry.dependencies]
@@ -21,6 +21,9 @@ pre-commit = "^3.8.0"
 black = "^24.8.0"
 pytest = "^8.3.3"
 setuptools = "^75.1.0"
+httpx = "^0.27.2"
+factory-boy = "^3.3.1"
+coverage = "^7.6.1"
 
 [build-system]
 requires = ["poetry-core"]

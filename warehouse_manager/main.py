@@ -60,13 +60,16 @@ def update_product(
 
 @app.delete("/products/{product_id}/")
 def delete_product(product_id: int, db: Session = Depends(get_db)):
-    if not crud.delete_product(db=db, product_id=product_id):
-        raise HTTPException(status_code=404, detail="Product not found")
+    crud.delete_product(db=db, product_id=product_id)
     return {"message": "Product successfully deleted"}
 
 
 @app.post("/orders/", response_model=schemas.OrderCreate)
 def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
+    if not order.items:
+        raise HTTPException(
+            status_code=400, detail="Order should contain at least one item"
+        )
     db_order = crud.create_order(db, order)
     if not db_order:
         raise HTTPException(

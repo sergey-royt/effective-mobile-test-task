@@ -4,8 +4,13 @@ install:
 test:
 	poetry run pytest -vv
 
+test-coverage:
+	poetry run coverage run -m pytest
+	poetry run coverage report -m --include=warehouse_manager/* --omit=warehouse_manager/settings.py
+	poetry run coverage xml --include=warehouse_manager/* --omit=warehouse_manager/settings.py
+
 dev:
-	poetry run uvicorn app.main:app --reload
+	poetry run uvicorn warehouse_manager.main:app --reload
 
 lint:
 	poetry run flake8 app

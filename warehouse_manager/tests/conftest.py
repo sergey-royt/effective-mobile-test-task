@@ -1,9 +1,10 @@
 import pytest
-
-
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, StaticPool
 from sqlalchemy.orm import scoped_session, sessionmaker
 
+from warehouse_manager.database import Base
+from warehouse_manager.main import app, get_db
+from warehouse_manager.tests.factories import ProductFactory
 
 # should encapsulate
 DB_URL = "sqlite:///test.sqlite3"
@@ -39,8 +40,28 @@ def db_session_factory(db_engine):
 def db_session(db_session_factory):
     """yields a SQLAlchemy connection which is rollbacked after the test"""
     session_ = db_session_factory()
+    ProductFactory._meta.sqlalchemy_session = session_
 
+    session_.begin()
     yield session_
 
     session_.rollback()
-    session_.close()
+
+
+@pytest.fixture(scope="function", autouse=True)
+def test_db(db_engine):
+    Base.metadata.create_all(bind=db_engine)
+    yield
+    Base.metadata.drop_all(bind=db_engine)
+
+
+@pytest.fixture(scope="function", autouse=True)
+def session_override(db_session):
+    def get_db_override():
+        try:
+            db = db_session
+            yield db
+        finally:
+            db.close()
+
+    app.dependency_overrides[get_db] = get_db_override

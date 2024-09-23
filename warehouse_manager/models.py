@@ -54,6 +54,9 @@ class Product(Base):
 
     stock_quantity: Mapped[int] = mapped_column(default=0)
 
+    def __repr__(self):
+        return self.name
+
 
 class Order(Base):
 

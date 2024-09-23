@@ -1,13 +1,15 @@
 import pytest
-from sqlalchemy import create_engine, StaticPool
+from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+from dotenv import load_dotenv
+import os
 
 from warehouse_manager.database import Base
 from warehouse_manager.main import app, get_db
 from warehouse_manager.tests.factories import ProductFactory
 
 # should encapsulate
-DB_URL = "sqlite:///test.sqlite3"
+DB_URL = os.getenv("TEST_DATABASE_URL")
 
 
 def pytest_addoption(parser):

@@ -1,4 +1,4 @@
-from .main import app
+from .endpoints import app
 
 
 __all__ = ["app"]

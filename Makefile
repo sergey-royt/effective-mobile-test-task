@@ -10,7 +10,7 @@ test-coverage:
 	poetry run coverage xml --include=warehouse_manager/* --omit=warehouse_manager/settings.py
 
 dev:
-	poetry run uvicorn warehouse_manager.main:app --reload
+	poetry run uvicorn warehouse_manager.app:app --reload
 
 lint:
 	poetry run flake8 warehouse_manager

@@ -1,16 +1,20 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ProductBase(BaseModel):
     name: str
 
-    description: str
+    description: str = Field(description="description of the product")
 
-    price: float
+    price: float = Field(
+        gt=0, description="The price must be greater than zero"
+    )
 
-    stock_quantity: int | None = None
+    stock_quantity: int = Field(
+        default=0, description="Quantity of product in stock"
+    )
 
 
 class ProductCreate(ProductBase):
@@ -45,7 +49,7 @@ class OrderItem(OrderItemBase):
 
     order_id: int
 
-    quantity: int
+    quantity: int = Field(gt=0, description="Can't be less than 1")
 
     model_config = ConfigDict(from_attributes=True)
 

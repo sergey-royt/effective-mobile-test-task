@@ -11,6 +11,7 @@ def create_product(
     db: Session, product: schemas.ProductCreate
 ) -> schemas.Product:
     """
+    Create product with given credentials
     :param db: session object
     :param product: product containing at least name, description, price,
     and stock quantity
@@ -139,7 +140,7 @@ def update_product(
     return db_product
 
 
-def delete_product(db: Session, product_id: int) -> None:
+def delete_product(db: Session, product_id: int) -> None | bool:
     """
     :param db: session object
     :param product_id: product id
@@ -147,14 +148,18 @@ def delete_product(db: Session, product_id: int) -> None:
     """
 
     db_product = get_product_by_id(db, product_id)
-    if db_product:
-        db.delete(db_product)
+    if not db_product:
+        return None
 
-        db.execute(
-            select(models.Product).where(models.Product.id == product_id)
-        ).first()
+    db.delete(db_product)
 
-        db.commit()
+    db.execute(
+        select(models.Product).where(models.Product.id == product_id)
+    ).first()
+
+    db.commit()
+
+    return True
 
 
 # orders section

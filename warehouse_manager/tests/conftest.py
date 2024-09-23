@@ -4,8 +4,9 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 import os
 from fastapi.testclient import TestClient
 
+from warehouse_manager.app import app
 from warehouse_manager.database import Base
-from warehouse_manager.main import app, get_db
+from warehouse_manager.endpoints import get_db
 from warehouse_manager.tests.factories import (
     ProductFactory,
     OrderFactory,

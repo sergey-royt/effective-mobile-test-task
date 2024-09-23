@@ -34,8 +34,8 @@ def create_product(
     - **price** (int | number),
     - **stock_quantity** (int)
 
-    **return:** Created product, or raise 400 http exception if product with given name
-    already exists.
+    **return:** Created product, or raise 400 http exception
+    if product with given name already exists.
     """
 
     db_product = crud.get_product_by_name(db, name=product.name)
@@ -127,7 +127,8 @@ def delete_product(product_id: int, db: Session = Depends(get_db)):
     **params:**
     - **product_id:** product id (int)
 
-    **return:** Success message or raise 404 http exception if product not found.
+    **return:** Success message or raise 404 http exception
+    if product not found.
     """
 
     if not crud.delete_product(db=db, product_id=product_id):

@@ -30,7 +30,8 @@ You can:
 """
 app = FastAPI(
     title="Warehouse manager API",
-    summary="FastAPI application for managing warehouse products and orders, with Auto docs for the API.",
+    summary="FastAPI application for managing warehouse "
+    "products and orders, with Auto docs for the API.",
     description=description,
     contact={
         "name": "Sergey Roytberg",

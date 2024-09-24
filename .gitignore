@@ -17,3 +17,7 @@ coverage.xml
 
 # env variables
 .env
+
+# docker
+Dockerfile
+docker-compose.yml

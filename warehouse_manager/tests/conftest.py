@@ -1,6 +1,8 @@
+from typing import Generator
 import pytest
-from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.exc import ProgrammingError
 import os
 from fastapi.testclient import TestClient
 
@@ -13,66 +15,90 @@ from warehouse_manager.tests.factories import (
     OrderItemFactory,
 )
 
-# should encapsulate
-DB_URL = os.getenv("TEST_DATABASE_URL")
 
-client = TestClient(app)
+TEST_DB_URL: str = os.getenv("TEST_DATABASE_URL")
+POSTGRESQL_ADMIN_DATABASE_URI: str = os.getenv("POSTGRESQL_ADMIN_DATABASE_URI")
 
+admin_engine = create_engine(
+    POSTGRESQL_ADMIN_DATABASE_URI, isolation_level="AUTOCOMMIT"
+)
+engine = create_engine(TEST_DB_URL)
+TestingSessionLocal = sessionmaker(
+    autocommit=False, autoflush=False, bind=engine
+)
 
-def pytest_addoption(parser):
-    parser.addoption(
-        "--dburl",
-        action="store",
-        default=DB_URL,
-        help="url of the database to use for tests",
-    )
-
-
-@pytest.fixture(scope="session")
-def db_engine(request):
-    """yields a SQLAlchemy engine which is suppressed after the test session"""
-    db_url = request.config.getoption("--dburl")
-    engine_ = create_engine(db_url, echo=True)
-
-    yield engine_
-
-    engine_.dispose()
+# client = TestClient(app)
 
 
-@pytest.fixture(scope="session")
-def db_session_factory(db_engine):
-    """returns a SQLAlchemy scoped session factory"""
-    return scoped_session(sessionmaker(bind=db_engine))
+# @pytest.fixture(scope="session")
+# def db_engine():
+#     """yields a SQLAlchemy engine which is suppressed after the test session"""
+#     engine_ = create_engine(DB_URL, echo=True)
+#
+#     yield engine_
+#
+#     engine_.dispose()
+def create_test_database():
+    """Create the test database if it doesn't exist."""
+    with admin_engine.connect() as connection:
+        try:
+            connection.execute(
+                text(f"CREATE DATABASE {TEST_DB_URL.split('/')[-1]}")
+            )
+        except ProgrammingError:
+            print("Database already exists, continuing...")
+
+
+# @pytest.fixture(scope="session")
+# def db_session_factory():
+#     """returns a SQLAlchemy scoped session factory"""
+#     return scoped_session(sessionmaker(bind=engine))
 
 
 @pytest.fixture(scope="function")
-def db_session(db_session_factory):
+def db_session():
     """yields a SQLAlchemy connection which is rollbacked after the test"""
-    session_ = db_session_factory()
-    ProductFactory._meta.sqlalchemy_session = session_
-    OrderFactory._meta.sqlalchemy_session = session_
-    OrderItemFactory._meta.sqlalchemy_session = session_
+    connection = engine.connect()
+    transaction = connection.begin()
+    session_ = TestingSessionLocal(bind=connection)
+    # ProductFactory._meta.sqlalchemy_session = session_
+    # OrderFactory._meta.sqlalchemy_session = session_
+    # OrderItemFactory._meta.sqlalchemy_session = session_
 
-    session_.begin()
     yield session_
 
-    session_.rollback()
+    session_.close()
+    transaction.rollback()
+    connection.close()
 
 
-@pytest.fixture(scope="function", autouse=True)
-def test_db(db_engine):
-    Base.metadata.create_all(bind=db_engine)
+@pytest.fixture(scope="session", autouse=True)
+def setup_test_db():
+    """
+    Create the test database schema before any tests run,
+    and drop it after all tests are done.
+    """
+    create_test_database()
+    Base.metadata.create_all(bind=engine)
     yield
-    Base.metadata.drop_all(bind=db_engine)
+    Base.metadata.drop_all(bind=engine)
 
 
-@pytest.fixture(scope="function", autouse=True)
-def session_override(db_session):
+@pytest.fixture(autouse=True)
+def set_session_for_factories(db_session: Session):
+
+    ProductFactory._meta.sqlalchemy_session = db_session
+    OrderFactory._meta.sqlalchemy_session = db_session
+    OrderItemFactory._meta.sqlalchemy_session = db_session
+
+
+@pytest.fixture(scope="function")
+def client(db_session: Session) -> Generator[TestClient, None, None]:
     def get_db_override():
-        try:
-            db = db_session
-            yield db
-        finally:
-            db.close()
+        yield db_session
 
     app.dependency_overrides[get_db] = get_db_override
+
+    with TestClient(app) as c:
+        yield c
+    app.dependency_overrides.clear()

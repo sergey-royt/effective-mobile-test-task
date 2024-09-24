@@ -179,10 +179,7 @@ def create_order(
     db.commit()
     db.refresh(db_order)
 
-    create_order_items(db, db_order.id, order.items)
-    db.refresh(db_order)
-
-    if not db_order.items:
+    if not create_order_items(db, db_order.id, order.items):
         db.delete(db_order)
         db.execute(
             select(models.Order).where(models.Order.id == db_order.id)

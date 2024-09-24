@@ -14,6 +14,7 @@ class ProductFactory(factory.alchemy.SQLAlchemyModelFactory):
 
     class Meta:
         model = Product
+        sqlalchemy_session_persistence = "commit"
 
     name = UniqueFaker("word")
     description = factory.Faker("sentence", nb_words=4)
@@ -26,8 +27,10 @@ class ProductFactory(factory.alchemy.SQLAlchemyModelFactory):
 class OrderFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Order
+        sqlalchemy_session_persistence = "commit"
 
 
 class OrderItemFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = OrderItem
+        sqlalchemy_session_persistence = "commit"

@@ -2,7 +2,7 @@ install:
 	poetry install
 
 test:
-	poetry run pytest -vv
+	poetry run pytest -s -vv
 
 test-coverage:
 	poetry run coverage run -m pytest

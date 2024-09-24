@@ -9,7 +9,7 @@ test-coverage:
 	poetry run coverage report -m --include=warehouse_manager/* --omit=warehouse_manager/settings.py
 	poetry run coverage xml --include=warehouse_manager/* --omit=warehouse_manager/settings.py
 
-dev:
+start:
 	poetry run uvicorn warehouse_manager.app:app --reload
 
 lint:

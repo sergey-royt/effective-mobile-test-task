@@ -1,8 +1,20 @@
+<div align="center">
+
 # Warehouse manager
 [![linter and tests](https://github.com/sergey-royt/effective-mobile-test-task/actions/workflows/linter-and-tests.yml/badge.svg)](https://github.com/sergey-royt/effective-mobile-test-task/actions/workflows/linter-and-tests.yml)
+[![Maintainability](https://api.codeclimate.com/v1/badges/274b3db0d7a68f4c120f/maintainability)](https://codeclimate.com/github/sergey-royt/effective-mobile-test-task/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/274b3db0d7a68f4c120f/test_coverage)](https://codeclimate.com/github/sergey-royt/effective-mobile-test-task/test_coverage)
 
 FastAPI powered warehouse application. A test task for [Effective mobile](https://effective-mobile.ru/#main).
 
+<p>
+
+<a href="#description">Description</a> •
+<a href="#installation">Installation</a> •
+<a href="#usage">Usage</a>
+</p>
+
+</div>
 
 ## Description
 
@@ -27,7 +39,7 @@ The API allows you to manage goods, inventory, and orders.
 - Get details of certain order.
 - Update order status.
 
-### Installation:
+## Installation:
 
 Before installing the package make sure you have Python version 3.12 or higher installed
 
@@ -44,6 +56,7 @@ The project uses the Poetry dependency manager. To install Poetry use its [offic
 PostgreSQL is used as the main database management system. You have to install it first. It can be downloaded from [official website](https://www.postgresql.org/download/)
 
 After thst you need to create database, for example using psql utility:
+
 ```sudo -u {user} psql -c 'create database {database_name};'```
 
 ### Application

@@ -50,7 +50,7 @@ class Product(Base):
 
     description: Mapped[str]
 
-    price: Mapped[float] = mapped_column(Numeric(precision=2))
+    price: Mapped[float] = mapped_column(Numeric(10, 2))
 
     stock_quantity: Mapped[int] = mapped_column(default=0)
 

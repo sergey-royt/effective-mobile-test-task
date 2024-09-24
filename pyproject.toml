@@ -13,6 +13,7 @@ python = "^3.12"
 sqlalchemy = "^2.0.35"
 fastapi = {extras = ["standard"], version = "^0.115.0"}
 python-dotenv = "^1.0.1"
+psycopg2-binary = "^2.9.9"
 
 
 [tool.poetry.group.dev.dependencies]

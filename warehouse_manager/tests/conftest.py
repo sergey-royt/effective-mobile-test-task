@@ -27,17 +27,7 @@ TestingSessionLocal = sessionmaker(
     autocommit=False, autoflush=False, bind=engine
 )
 
-# client = TestClient(app)
 
-
-# @pytest.fixture(scope="session")
-# def db_engine():
-#     """yields a SQLAlchemy engine which is suppressed after the test session"""
-#     engine_ = create_engine(DB_URL, echo=True)
-#
-#     yield engine_
-#
-#     engine_.dispose()
 def create_test_database():
     """Create the test database if it doesn't exist."""
     with admin_engine.connect() as connection:
@@ -49,21 +39,12 @@ def create_test_database():
             print("Database already exists, continuing...")
 
 
-# @pytest.fixture(scope="session")
-# def db_session_factory():
-#     """returns a SQLAlchemy scoped session factory"""
-#     return scoped_session(sessionmaker(bind=engine))
-
-
 @pytest.fixture(scope="function")
 def db_session():
     """yields a SQLAlchemy connection which is rollbacked after the test"""
     connection = engine.connect()
     transaction = connection.begin()
     session_ = TestingSessionLocal(bind=connection)
-    # ProductFactory._meta.sqlalchemy_session = session_
-    # OrderFactory._meta.sqlalchemy_session = session_
-    # OrderItemFactory._meta.sqlalchemy_session = session_
 
     yield session_
 

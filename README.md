@@ -8,10 +8,9 @@
 FastAPI powered warehouse application. A test task for [Effective mobile](https://effective-mobile.ru/#main).
 
 <p>
-
 <a href="#description">Description</a> •
 <a href="#installation">Installation</a> •
-<a href="#usage">Usage</a>
+<a href="#documentation">Documentation</a>
 </p>
 
 </div>
@@ -41,6 +40,33 @@ The API allows you to manage goods, inventory, and orders.
 
 ## Installation:
 
+### _Easy mode:_
+
+Clone this project:
+
+```git clone git@github.com:sergey-royt/effective-mobile-test-task.git && cd effective-mobile-test-task```
+
+Create ```.env``` file and set up following variables:
+
+```
+POSTGRES_USER={postgres_username}
+
+POSTGRES_PASSWORD={postgres_password}
+
+POSTGRES_DB={db_name}
+
+EXPOSE_PORT={port}
+
+DATABASE_URL=postgresql+psycopg2://{postgres_username}:{postgres_password}@db:5432/{db_name}
+```
+
+And run:
+
+```docker compose up -d```
+
+The server will be available at http://127.0.0.1:${EXPOSE_PORT}.
+
+### _Manual installation:_
 Before installing the package make sure you have Python version 3.12 or higher installed
 
 ```bash
@@ -90,8 +116,6 @@ or only ```DATABASE_URL``` if tests not needed
 
 ---
 
-## Usage
-
 Start the Uvicorn Web-server by running:
 
 ```shell
@@ -100,9 +124,9 @@ Start the Uvicorn Web-server by running:
 
 By default, the server will be available at http://127.0.0.1:8000.
 
-## Documenatation
+## Documentation
 
-Swagger OpenAPI documentation will be able at http://127.0.0.1:8000/docs/
+Swagger OpenAPI documentation will be able at http://127.0.0.1:${EXPOSE_PORT}/docs/ 
 
 ### Makefile Commands
 
@@ -125,3 +149,5 @@ Swagger OpenAPI documentation will be able at http://127.0.0.1:8000/docs/
 [fastapi](https://fastapi.tiangolo.com/) = "0.115.0"
 
 [psycopg2-binary](https://www.psycopg.org/docs/) = "2.9.9"
+
+[docker](https://www.docker.com/)
